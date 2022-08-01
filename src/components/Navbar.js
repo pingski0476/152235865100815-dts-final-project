@@ -1,7 +1,20 @@
 import React from "react";
 import { Box, Button, Flex, Heading, Link } from "@chakra-ui/react";
 import { Link as RouteLink } from "react-router-dom";
+import { auth, userLogoutFunc } from "../config/Firebase";
+import { useNavigate } from "react-router-dom";
+import { useAuthState } from "react-firebase-hooks/auth";
+
 const Navbar = () => {
+  const nav = useNavigate();
+  const [user] = useAuthState(auth);
+  const userLogoutHandler = async () => {
+    await userLogoutFunc();
+    nav("/login");
+  };
+  const navToSignIn = () => {
+    nav("/login");
+  };
   return (
     <Flex
       maxW={"100%"}
@@ -22,14 +35,15 @@ const Navbar = () => {
         <Link>Details</Link>
       </Box>
       <Box display={"flex"} gap={2}>
-        <RouteLink to={"/login"}>
-          <Button variant={"outline"} colorScheme={"gray"}>
-            Login
+        {user ? (
+          <Button colorScheme={"violet"} onClick={userLogoutHandler}>
+            Sign Out
           </Button>
-        </RouteLink>
-        <RouteLink to={"/register"}>
-          <Button colorScheme={"gray"}>SignUp</Button>
-        </RouteLink>
+        ) : (
+          <Button colorScheme={"violet"} onClick={navToSignIn}>
+            Sign In
+          </Button>
+        )}
       </Box>
     </Flex>
   );
