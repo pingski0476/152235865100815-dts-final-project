@@ -8,44 +8,34 @@ import {
   FormLabel,
   Heading,
   Text,
+  Alert,
+  AlertIcon,
+  AlertDescription,
 } from "@chakra-ui/react";
 
 import { Link, useNavigate } from "react-router-dom";
 import { useAuthState } from "react-firebase-hooks/auth";
-import {
-  auth,
-  userLoginFunc,
-  userRegisterWithEmailPassword,
-} from "../config/Firebase";
+import { auth, userRegisterWithEmailPassword } from "../config/Firebase";
 import LoadingScreen from "./LoadingScreen";
+import { signInWithEmailAndPassword } from "firebase/auth";
 
 const LoginOrRegister = ({ loginOrRegis }) => {
   const nav = useNavigate();
-  // const toast = useToast();
-  // const Toast = () =>
-  //   toast({
-  //     title: "Error",
-  //     description: error.message,
-  //     status: "error",
-  //     duration: 1000,
-  //     isClosable: true,
-  //   });
 
-  const [user, loading, error] = useAuthState(auth);
+  const [user, loading] = useAuthState(auth);
 
   useEffect(() => {
     if (user) {
       nav("/");
     }
-    if (error !== undefined) {
-      console.log(error);
-    }
-  }, [user, nav, error]);
+  }, [user, nav]);
 
   const [credential, setCredential] = useState({
     email: "",
     password: "",
   });
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const emailOnChangeHandler = (event) => {
     setCredential({
@@ -61,18 +51,29 @@ const LoginOrRegister = ({ loginOrRegis }) => {
     });
   };
 
-  const loginHandler = () => {
-    userLoginFunc(credential.email, credential.password);
+  const loginHandler = async (email, password) => {
+    try {
+      const loginResponse = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+      console.log("User yang sekarang login adalah :", loginResponse.user);
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
   };
 
   const registerHandler = () => {
     userRegisterWithEmailPassword(credential.email, credential.password);
   };
 
-  const loginOrRegisterHandler = () => {
+  const loginOrRegisterHandler = (e) => {
     if (loginOrRegis === "login") {
-      loginHandler();
+      e.preventDefault();
+      loginHandler(credential.email, credential.password);
     } else {
+      e.preventDefault();
       registerHandler();
     }
   };
@@ -103,8 +104,18 @@ const LoginOrRegister = ({ loginOrRegis }) => {
           p={"2em"}
           width={"xs"}
           shadow={"xl"}
+          flexDirection={"column"}
         >
-          <form>
+          {errorMessage !== "" ? (
+            <Alert status="error">
+              <AlertIcon />
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          ) : (
+            <></>
+          )}
+
+          <form onSubmit={loginOrRegisterHandler}>
             <FormControl my={"1em"} isRequired>
               <FormLabel fontWeight={"bold"}>Email</FormLabel>
               <Input
@@ -129,8 +140,7 @@ const LoginOrRegister = ({ loginOrRegis }) => {
             </FormControl>
 
             <Button
-              type="button"
-              onClick={loginOrRegisterHandler}
+              type="submit"
               my={"1em"}
               width={"full"}
               colorScheme={"violet"}

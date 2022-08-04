@@ -24,16 +24,13 @@ const Navbar = () => {
       alignItems={"center"}
     >
       <Box maxW={"25%"}>
-        <Heading px={3} fontSize={"2xl"}>
-          Pingski
-        </Heading>
-      </Box>
-      <Box display={"flex"} gap={5} fontSize={"lg"} px={4}>
         <RouteLink to={"/"}>
-          <Link>Home</Link>
+          <Heading px={3} fontSize={"2xl"}>
+            Pokedex
+          </Heading>
         </RouteLink>
-        <Link>Details</Link>
       </Box>
+
       <Box display={"flex"} gap={2}>
         {user ? (
           <Button colorScheme={"violet"} onClick={userLogoutHandler}>

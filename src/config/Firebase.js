@@ -8,7 +8,6 @@ import { initializeApp } from "firebase/app";
 import {
   getAuth,
   createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
   sendPasswordResetEmail,
   signOut,
 } from "firebase/auth";
@@ -48,19 +47,6 @@ const userRegisterWithEmailPassword = async (email, password) => {
   }
 };
 
-const userLoginFunc = async (email, password) => {
-  try {
-    const loginResponse = await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
-    console.log("User yang sekarang login adalah :", loginResponse.user);
-  } catch (error) {
-    return error;
-  }
-};
-
 const userLogoutFunc = async () => {
   try {
     await signOut(auth);
@@ -76,10 +62,4 @@ const userForgotPass = async (email) => {
   }
 };
 
-export {
-  auth,
-  userRegisterWithEmailPassword,
-  userLoginFunc,
-  userLogoutFunc,
-  userForgotPass,
-};
+export { auth, userRegisterWithEmailPassword, userLogoutFunc, userForgotPass };

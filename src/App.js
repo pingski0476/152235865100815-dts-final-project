@@ -7,6 +7,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import Error from "./pages/Error";
 import HasLogin from "./components/HasLogin";
+import PokeList from "./pages/PokeList";
+import PokeEvo from "./pages/PokeEvo";
 
 const theme = extendTheme({
   colors: {
@@ -28,14 +30,17 @@ function App() {
     <ChakraProvider theme={theme}>
       <Font />
       <Routes>
-        <Route
-          path="/"
-          element={
-            <HasLogin>
-              <Home />
-            </HasLogin>
-          }
-        ></Route>
+        <Route path="/" element={<Home />}>
+          <Route path="/" element={<PokeList />} />
+          <Route
+            path="/:pokeId"
+            element={
+              <HasLogin>
+                <PokeEvo />
+              </HasLogin>
+            }
+          />
+        </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="*" element={<Error />} />
